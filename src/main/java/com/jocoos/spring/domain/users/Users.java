@@ -2,6 +2,7 @@ package com.jocoos.spring.domain.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jocoos.spring.domain.Timestamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,14 +36,10 @@ public class Users extends Timestamped {
     private String createdBy;
     private String modifiedBy;
 
-    public Users(Users entity, UserRole userRole) {
-        this.id = entity.getId();
-        this.username = entity.getUsername();
-        this.password = entity.getPassword();
-        this.name = entity.getName();
+    @Builder
+    public Users(String username, String password, UserRole userRole) {
+        this.username = username;
+        this.password = password;
         this.role = userRole;
-        this.deleted = entity.isDeleted();
-        this.createdBy = entity.getCreatedBy();
-        this.modifiedBy = entity.getModifiedBy();
     }
 }

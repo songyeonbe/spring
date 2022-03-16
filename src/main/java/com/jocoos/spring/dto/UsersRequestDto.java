@@ -11,7 +11,6 @@ public class UsersRequestDto {
     private String username;
     private String password;
     private String name;
-    // Token?
 
     @Builder
     public UsersRequestDto(String username, String password, String name) {
@@ -20,7 +19,4 @@ public class UsersRequestDto {
         this.name = name;
     }
 
-    public Users toEntity(Users entity, UserRole role) {
-        return new Users(entity, role);
-    }
 }
