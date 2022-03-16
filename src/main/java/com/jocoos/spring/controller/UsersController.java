@@ -13,10 +13,22 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping("/hello")
+    @GetMapping("/login")
     public String login() {
         String name = "로그인 테스트";
         log.info("hello={}", name);
+        return "ok";
+    }
+
+    @GetMapping("/test/permit-all")
+    public String admin() {
+        log.info("everyone");
+        return "ok";
+    }
+
+    @GetMapping("/test/user")
+    public String user() {
+        log.info("user allowed");
         return "ok";
     }
 }

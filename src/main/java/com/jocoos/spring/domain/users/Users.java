@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Getter
@@ -30,15 +27,20 @@ public class Users extends Timestamped {
     private String password;
     private String name;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
     private boolean deleted = true;
     private String createdBy;
     private String modifiedBy;
 
-    public Users(Users entity) {
+    public Users(Users entity, UserRole userRole) {
         this.id = entity.getId();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
         this.name = entity.getName();
+        this.role = userRole;
         this.deleted = entity.isDeleted();
         this.createdBy = entity.getCreatedBy();
         this.modifiedBy = entity.getModifiedBy();

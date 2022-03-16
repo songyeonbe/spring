@@ -13,8 +13,11 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
 
-    public Optional<Users> findByIdPw(String id) {
-        return usersRepository.findById(id);
+    public Users create(Users users) {
+        // Todo 유효성 검사
+        // Todo dto toEntity 사용하기
+        return usersRepository.save(users);
     }
+
 
 }
