@@ -32,7 +32,7 @@ public class Users extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
-    private boolean deleted = true;
+    private boolean deleted = false;
     private String createdBy;
     private String modifiedBy;
 

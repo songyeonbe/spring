@@ -10,12 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SecurityUser implements UserDetails {
+public class JwtUser implements UserDetails {
 
     private final Users user;
     private static final String ROLE_PREFIX = "ROLE_";
 
-    public SecurityUser(Users user) {
+    public JwtUser(Users user) {
         this.user = user;
     }
 

@@ -73,7 +73,7 @@ public class JwtTokenUtil implements Serializable {
     }
 
 
-    //retrieve username from jwt token
+    //토큰 발행한 username from jwt token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }

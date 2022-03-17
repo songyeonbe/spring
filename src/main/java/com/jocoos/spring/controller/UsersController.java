@@ -1,7 +1,6 @@
 package com.jocoos.spring.controller;
 
 import com.jocoos.spring.config.security.CustomUserDetailsService;
-import com.jocoos.spring.config.security.SecurityUser;
 import com.jocoos.spring.dto.JwtResponse;
 import com.jocoos.spring.dto.UsersRequestDto;
 import com.jocoos.spring.service.UsersService;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Base64;
 
 @RestController
 @RequiredArgsConstructor
