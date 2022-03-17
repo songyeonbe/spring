@@ -1,15 +1,29 @@
 package com.jocoos.spring.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -19,8 +33,13 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private RSAPrivateKey privateKey;
+
+    @PostConstruct
+    protected void readPrivateKey() throws IOException, GeneralSecurityException {
+        // private key 가져오기
+    }
+
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -38,7 +57,7 @@ public class JwtTokenUtil implements Serializable {
     }
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(privateKey).parseClaimsJws(token).getBody();
     }
 
     //check if the token has expired
@@ -60,11 +79,11 @@ public class JwtTokenUtil implements Serializable {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .signWith(SignatureAlgorithm.RS256, secret).compact();
+                .signWith(SignatureAlgorithm.RS256, privateKey).compact();
     }
 
 
-    // 토큰 검증
+    // validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

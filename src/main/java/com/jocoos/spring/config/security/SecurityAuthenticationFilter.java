@@ -16,12 +16,11 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
-public class SecurityAuthenticationFilter extends OncePerRequestFilter {
+public class SecurityAuthenticationFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
     // jwtUtil
 
-    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -29,7 +28,7 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
         UserDetails testUserFound = customUserDetailsService.loadUserByUsername("test");
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(testUserFound.getUsername(), null, null);
 
-        // user 검색하고 있으면 인증
+        // 토큰 검증
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
 

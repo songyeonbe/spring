@@ -5,12 +5,15 @@ import com.jocoos.spring.domain.users.Users;
 import com.jocoos.spring.dto.UsersRequestDto;
 import com.jocoos.spring.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UsersService {
@@ -19,12 +22,10 @@ public class UsersService {
     private final PasswordEncoder passwordEncoder;
 
     public Users create(UsersRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        Users existUser = usersRepository.findByUsername(username);
 
-        if(existUser != null) {
-            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-        }
+        String username = requestDto.getUsername();
+        log.info("서비스단 잘 동작 {}", username);
+
         String pw = passwordEncoder.encode(requestDto.getPassword());
         UserRole role = UserRole.USER;
 

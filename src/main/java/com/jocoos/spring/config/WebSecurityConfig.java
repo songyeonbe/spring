@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().disable();
 
-        http.addFilterBefore(securityAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+       // http.addFilterBefore(securityAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
