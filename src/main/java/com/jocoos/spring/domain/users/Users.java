@@ -2,14 +2,12 @@ package com.jocoos.spring.domain.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jocoos.spring.domain.Timestamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Getter
@@ -30,17 +28,18 @@ public class Users extends Timestamped {
     private String password;
     private String name;
 
-    private boolean deleted = true;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
+    private boolean deleted = false;
     private String createdBy;
     private String modifiedBy;
 
-    public Users(Users entity) {
-        this.id = entity.getId();
-        this.username = entity.getUsername();
-        this.password = entity.getPassword();
-        this.name = entity.getName();
-        this.deleted = entity.isDeleted();
-        this.createdBy = entity.getCreatedBy();
-        this.modifiedBy = entity.getModifiedBy();
+    @Builder
+    public Users(String username, String password, UserRole userRole) {
+        this.username = username;
+        this.password = password;
+        this.role = userRole;
     }
 }
