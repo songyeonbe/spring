@@ -1,6 +1,11 @@
 # spring
 토큰을 이용한 로그인 구현
 
+[진행 사항](https://github.com/songyeonbe/spring/projects/1)
+
+<hr/>
+
+
 ## Spring Security 를 이용하여 토큰 방식의 로그인을 구현해본다.
 
 ### Spring MVC를 이용하여 사용자 가입 기능을 만든다.
