@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -31,11 +33,13 @@ public class JwtAuthenticationFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+
         String header = request.getHeader(HEADER_STRING);
         String username = null;
         String authToken = null;
         if (header != null && header.startsWith(TOKEN_TYPE)) {
             authToken = header.replace(TOKEN_TYPE, "");
+
             try {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
@@ -45,15 +49,22 @@ public class JwtAuthenticationFilter {
             } catch(SignatureException e){
                 log.error("Authentication Failed. Username or Password not valid.");
             }
+        } else {
+            logger.warn("couldn't find bearer string, will ignore the header");
         }
 
-        UserDetails UserFound = customUserDetailsService.loadUserByUsername(username);
-        // 인증된 사용자 정보(principal), 패스워드(cridential), principal 권한 검증
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(UserFound.getUsername(), null, null);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        // 성공하면 토큰 검증 (ThreadLocal? SecurityContext? ) Todo : 0317 학습하기
-        SecurityContextHolder.getContext().setAuthentication(auth);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+            if (jwtTokenUtil.validateToken(authToken)) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                logger.info("authenticated user " + username + ", setting security context");
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
+
         filterChain.doFilter(request, response);
-
     }
 }

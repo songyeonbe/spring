@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 @RequiredArgsConstructor
@@ -29,7 +31,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .cors().and()
-                .csrf().disable()
                 .headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 .and()
                 .sessionManagement()
@@ -41,15 +42,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/h2-console/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/test/permit-all").permitAll()
-                .antMatchers("/signup").permitAll()
-                .antMatchers("/test/user").authenticated()
-                .antMatchers("/**").authenticated()
-                .anyRequest().permitAll()
-                .and()
+                    .antMatchers("/test/permit-all").permitAll()
+                    .antMatchers("/signup").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
                 .formLogin().disable();
 
-       // http.addFilterBefore(securityAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -57,6 +56,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/signup")
+                .antMatchers("/test/permit-all");
+    }
 
     @Bean
     @Override
